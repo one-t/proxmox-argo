@@ -68,7 +68,7 @@ data:
     </head>
     <body>
         <div class="container">
-            <h1>🚀 Hello from Terraform + K3s + ArgoCD!</h1>
+            <h1>&#x1F680; Hello from Terraform + K3s + ArgoCD!</h1>
             <p>Running on Proxmox with automated GitOps deployment</p>
             <p><strong>Pod:</strong> <span id="hostname"></span></p>
         </div>
