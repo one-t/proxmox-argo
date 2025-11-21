@@ -17,31 +17,34 @@ spec:
     spec:
       containers:
       - name: runner
-        image: myoung34/github-runner:latest
+        image: ghcr.io/actions/actions-runner:latest
         env:
         - name: RUNNER_NAME
           value: "k3s-runner-1"
         - name: RUNNER_WORKDIR
-          value: "/tmp/runner"
-        - name: RUNNER_SCOPE
-          value: "repo"
+          value: "/runner/_work"
         - name: REPO_URL
           valueFrom:
             secretKeyRef:
               name: github-runner-secret
               key: repo-url
-        - name: ACCESS_TOKEN
+        - name: GITHUB_TOKEN
           valueFrom:
             secretKeyRef:
               name: github-runner-secret
               key: token
-        - name: LABELS
+        - name: RUNNER_LABELS
           value: "k3s,self-hosted,linux,x64"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          cd /runner
+          ./config.sh --url ${REPO_URL} --token ${GITHUB_TOKEN} --labels ${RUNNER_LABELS} --name ${RUNNER_NAME} --work ${RUNNER_WORKDIR} --unattended --replace
+          ./run.sh
         volumeMounts:
         - name: runner-work
-          mountPath: /tmp/runner
-        - name: docker-sock
-          mountPath: /var/run/docker.sock
+          mountPath: /runner/_work
         resources:
           requests:
             memory: "512Mi"
@@ -52,7 +55,3 @@ spec:
       volumes:
       - name: runner-work
         emptyDir: {}
-      - name: docker-sock
-        hostPath:
-          path: /var/run/docker.sock
-          type: Socket
