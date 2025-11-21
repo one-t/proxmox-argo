@@ -105,7 +105,11 @@ data:
             <p><strong>Pod:</strong> <span id="hostname"></span></p>
         </div>
         <script>
-            fetch('api/hostname')
+            // Use window.location to get the current path and append api/hostname
+            const basePath = window.location.pathname.endsWith('/') 
+                ? window.location.pathname 
+                : window.location.pathname + '/';
+            fetch(basePath + 'api/hostname')
                 .then(r => r.text())
                 .then(h => document.getElementById('hostname').textContent = h)
                 .catch(e => {
