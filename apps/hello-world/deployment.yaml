@@ -20,13 +20,45 @@ spec:
         image: nginx:alpine
         ports:
         - containerPort: 80
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: html
           mountPath: /usr/share/nginx/html
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
       volumes:
       - name: html
         configMap:
           name: hello-world-html
+      - name: nginx-config
+        configMap:
+          name: hello-world-nginx
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-nginx
+  namespace: default
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+        
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
+        }
+        
+        location /api/hostname {
+            add_header Content-Type text/plain;
+            return 200 $hostname;
+        }
+    }
 ---
 apiVersion: v1
 kind: ConfigMap
