@@ -105,10 +105,13 @@ data:
             <p><strong>Pod:</strong> <span id="hostname"></span></p>
         </div>
         <script>
-            fetch('/api/hostname')
+            fetch('api/hostname')
                 .then(r => r.text())
                 .then(h => document.getElementById('hostname').textContent = h)
-                .catch(() => document.getElementById('hostname').textContent = window.location.hostname);
+                .catch(e => {
+                    console.error('Failed to fetch hostname:', e);
+                    document.getElementById('hostname').textContent = 'unknown';
+                });
         </script>
     </body>
     </html>
