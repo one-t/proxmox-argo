@@ -4,10 +4,10 @@ metadata:
   name: terraform-k3s-hello-world
   namespace: default
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-  - host: terraform-k3s-hello-world.local
+  - host: terraform-k3s-hello-world.tail9782b6.ts.net
     http:
       paths:
       - path: /
