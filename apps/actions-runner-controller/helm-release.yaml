@@ -3,6 +3,8 @@ kind: Secret
 metadata:
   name: controller-manager
   namespace: actions-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 stringData:
   github_token: GITHUB_TOKEN_PLACEHOLDER
 ---
@@ -11,6 +13,8 @@ kind: ConfigMap
 metadata:
   name: actions-runner-controller-helm
   namespace: actions-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 data:
   values.yaml: |
     authSecret:
@@ -35,6 +39,7 @@ metadata:
   name: install-actions-runner-controller
   namespace: actions-runner-system
   annotations:
+    argocd.argoproj.io/sync-wave: "2"
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
@@ -69,11 +74,15 @@ kind: ServiceAccount
 metadata:
   name: actions-runner-controller-installer
   namespace: actions-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: actions-runner-controller-installer
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
