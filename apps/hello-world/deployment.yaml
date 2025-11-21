@@ -49,12 +49,12 @@ data:
         listen 80;
         server_name _;
         
-        location / {
-            root /usr/share/nginx/html;
+        location /hello-world/ {
+            alias /usr/share/nginx/html/;
             index index.html;
         }
         
-        location /api/hostname {
+        location /hello-world/api/hostname {
             add_header Content-Type text/plain;
             return 200 $hostname;
         }
@@ -105,7 +105,7 @@ data:
             <p><strong>Pod:</strong> <span id="hostname"></span></p>
         </div>
         <script>
-            fetch('api/hostname')
+            fetch('/hello-world/api/hostname')
                 .then(r => r.text())
                 .then(h => document.getElementById('hostname').textContent = h)
                 .catch(e => {
