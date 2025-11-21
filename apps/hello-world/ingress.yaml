@@ -5,6 +5,7 @@ metadata:
   namespace: default
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: default-hello-world-stripprefix@kubernetescrd
 spec:
   rules:
   - http:
@@ -16,3 +17,13 @@ spec:
             name: hello-world
             port:
               number: 80
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: hello-world-stripprefix
+  namespace: default
+spec:
+  stripPrefix:
+    prefixes:
+      - /hello-world
