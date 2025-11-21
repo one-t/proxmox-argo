@@ -7,29 +7,9 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-  - host: terraform-k3s-hello-world.tail9782b6.ts.net
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: hello-world
-            port:
-              number: 80
-  - host: tf-k3s-gateway-1.tail9782b6.ts.net
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: hello-world
-            port:
-              number: 80
   - http:
       paths:
-      - path: /
+      - path: /hello-world
         pathType: Prefix
         backend:
           service:
