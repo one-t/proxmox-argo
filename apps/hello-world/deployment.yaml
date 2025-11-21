@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  namespace: default
+  labels:
+    app: hello-world
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: hello-world-html
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-html
+  namespace: default
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Hello from k3s!</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+            .container {
+                text-align: center;
+                padding: 2rem;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                backdrop-filter: blur(10px);
+            }
+            h1 {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+            p {
+                font-size: 1.2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚀 Hello from Terraform + K3s + ArgoCD!</h1>
+            <p>Running on Proxmox with automated GitOps deployment</p>
+            <p><strong>Pod:</strong> <span id="hostname"></span></p>
+        </div>
+        <script>
+            fetch('/api/hostname')
+                .then(r => r.text())
+                .then(h => document.getElementById('hostname').textContent = h)
+                .catch(() => document.getElementById('hostname').textContent = window.location.hostname);
+        </script>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world
+  namespace: default
+spec:
+  selector:
+    app: hello-world
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
