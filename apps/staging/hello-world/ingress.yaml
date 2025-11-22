@@ -24,4 +24,4 @@ metadata:
 spec:
   stripPrefix:
     prefixes:
-      - /hello-world
+      - /staging/hello-world
