@@ -20,11 +20,11 @@ data:
             return 200 "🐮 Moo! Your fortune awaits at the main page! 🐮\n";
         }
     }
-  index.html: |
+  index.html: |-
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Cowsay Fortune Teller 🐮</title>
+        <title>Cowsay Fortune Teller</title>
         <style>
             body {
                 font-family: 'Courier New', monospace;
