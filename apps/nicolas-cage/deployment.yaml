@@ -1,0 +1,351 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nicolas-cage
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nicolas-cage
+  namespace: nicolas-cage
+data:
+  nginx.conf: |-
+    server {
+        listen 80;
+        server_name _;
+        root /usr/share/nginx/html;
+        index index.html;
+        
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+        
+        location /api/hostname {
+            default_type text/plain;
+            alias /usr/share/nginx/html/hostname.txt;
+        }
+    }
+  index.html: |-
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>🎬 Random Nicolas Cage</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: 'Georgia', serif;
+                background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+                color: #f0e6d2;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .container {
+                max-width: 900px;
+                width: 100%;
+                text-align: center;
+            }
+            h1 {
+                font-size: 3em;
+                margin-bottom: 10px;
+                text-shadow: 0 0 30px rgba(255,215,0,0.5);
+                color: #ffd700;
+            }
+            .subtitle {
+                font-size: 1.3em;
+                color: #d4af37;
+                margin-bottom: 40px;
+                font-style: italic;
+            }
+            .cage-button {
+                margin: 20px 0;
+                padding: 20px 50px;
+                font-size: 1.8em;
+                background: linear-gradient(135deg, #c79100 0%, #8b6508 100%);
+                border: 3px solid #ffd700;
+                border-radius: 10px;
+                color: white;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all 0.3s;
+                font-family: 'Georgia', serif;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            }
+            .cage-button:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(255,215,0,0.6);
+            }
+            .cage-container {
+                margin: 30px 0;
+                padding: 30px;
+                background: rgba(255,255,255,0.05);
+                border: 3px solid #ffd700;
+                border-radius: 15px;
+                min-height: 400px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .movie-title {
+                font-size: 2em;
+                margin-bottom: 20px;
+                color: #ffd700;
+                font-weight: bold;
+            }
+            .cage-image {
+                max-width: 100%;
+                max-height: 400px;
+                border: 5px solid #ffd700;
+                border-radius: 10px;
+                margin: 20px 0;
+                box-shadow: 0 0 30px rgba(255,215,0,0.3);
+            }
+            .quote {
+                font-size: 1.4em;
+                margin: 20px 0;
+                padding: 20px;
+                background: rgba(0,0,0,0.3);
+                border-left: 5px solid #ffd700;
+                font-style: italic;
+                line-height: 1.6;
+            }
+            .attribution {
+                font-size: 0.9em;
+                color: #888;
+                margin-top: 10px;
+            }
+            .pod-info {
+                margin-top: 30px;
+                padding: 15px;
+                background: rgba(255,255,255,0.05);
+                border-radius: 5px;
+                font-size: 0.9em;
+            }
+            .loading {
+                color: #ffd700;
+                font-size: 1.5em;
+                animation: pulse 1.5s ease-in-out infinite;
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🎬 Nicolas Cage Wisdom 🎬</h1>
+            <p class="subtitle">Inspirational tech quotes from the One True God</p>
+            
+            <button class="cage-button" onclick="getCage()">UNLEASH THE CAGE 🦅</button>
+            
+            <div class="cage-container" id="cageContainer">
+                <div class="loading">Click the button to receive wisdom...</div>
+            </div>
+            
+            <div class="pod-info">
+                🎯 Wisdom dispensed by pod: <strong><span id="hostname">Loading...</span></strong>
+            </div>
+        </div>
+
+        <script>
+            const cageWisdom = [
+                {
+                    movie: "Con Air",
+                    image: "https://m.media-amazon.com/images/M/MV5BNjVkMWM4M2EtNzhiOS00ZDkzLTgwMGQtN2M1YTk3ZDk1MWRkXkEyXkFqcGc@._V1_.jpg",
+                    quote: "Put the bunny back in the box. Also, put your code in version control.",
+                    techQuote: true
+                },
+                {
+                    movie: "National Treasure",
+                    image: "https://m.media-amazon.com/images/M/MV5BNTUxMjUxNjg0MV5BMl5BanBnXkFtZTcwMTk0MTQzMw@@._V1_.jpg",
+                    quote: "I'm gonna steal the Declaration of Independence. And your production database credentials if you hardcode them.",
+                    techQuote: true
+                },
+                {
+                    movie: "Face/Off",
+                    image: "https://m.media-amazon.com/images/M/MV5BNzMzNjE0NTk3OV5BMl5BanBnXkFtZTcwNjQzNDEyNA@@._V1_.jpg",
+                    quote: "I could eat a peach for hours. But I cannot debug this legacy code for hours. Nobody can.",
+                    techQuote: true
+                },
+                {
+                    movie: "The Rock",
+                    image: "https://m.media-amazon.com/images/M/MV5BZGQ0MTM5ZWUtZDUxYy00ZDExLWFiZmEtNGZiMTg1ZjYxMGQ1XkEyXkFqcGc@._V1_.jpg",
+                    quote: "Your best? Losers always whine about their best. Winners go home and optimize their database queries.",
+                    techQuote: true
+                },
+                {
+                    movie: "Gone in 60 Seconds",
+                    image: "https://m.media-amazon.com/images/M/MV5BMTIwMzExNDEwN15BMl5BanBnXkFtZTYwODMxMzg2._V1_.jpg",
+                    quote: "I'm a little tired, a little wired, and I think I deserve a little appreciation. And by appreciation, I mean properly configured monitoring.",
+                    techQuote: true
+                },
+                {
+                    movie: "Adaptation",
+                    image: "https://m.media-amazon.com/images/M/MV5BYzk5MDQ3MDU5NF5BMl5BanBnXkFtZTYwNTY4Mzg3._V1_.jpg",
+                    quote: "You are what you love, not what loves you. So if you love spaghetti code, that's concerning.",
+                    techQuote: true
+                },
+                {
+                    movie: "Raising Arizona",
+                    image: "https://m.media-amazon.com/images/M/MV5BNTUwNzExMGYtMzVjNy00OTQxLWJhMzEtNjIzYWQ4YzYyMzA4XkEyXkFqcGc@._V1_.jpg",
+                    quote: "Son, you got a panty on your head. Also, you got a memory leak in production.",
+                    techQuote: true
+                },
+                {
+                    movie: "Leaving Las Vegas",
+                    image: "https://m.media-amazon.com/images/M/MV5BYzJiNDQzNDUtNDA1OC00MjgxLTk5YzItMGEwMWI2MDA0M2Q5XkEyXkFqcGc@._V1_.jpg",
+                    quote: "I don't know if I started drinking because my code was bad, or if my code is bad because I started drinking.",
+                    techQuote: true
+                },
+                {
+                    movie: "Kick-Ass",
+                    image: "https://m.media-amazon.com/images/M/MV5BODJlODMyZjQtNjQxOC00ODFiLWJiODQtMjFjMDg1YTM3YWY0XkEyXkFqcGc@._V1_.jpg",
+                    quote: "With no power comes no responsibility. Except for deployments. Always responsible for deployments.",
+                    techQuote: true
+                },
+                {
+                    movie: "Lord of War",
+                    image: "https://m.media-amazon.com/images/M/MV5BNjYzOWM5MzctMTBiZi00YTI4LWJiYzUtNGZiYzZlZjhiM2M4XkEyXkFqcGc@._V1_.jpg",
+                    quote: "The first time you push to production on a Friday, it's not a choice. It's a curse.",
+                    techQuote: true
+                },
+                {
+                    movie: "Mandy",
+                    image: "https://m.media-amazon.com/images/M/MV5BMjk1MjI0MTQ2Nl5BMl5BanBnXkFtZTgwNDg4NzkwNjM@._V1_.jpg",
+                    quote: "You ripped my shirt! YOU RIPPED MY SHIRT! Also you corrupted the database!",
+                    techQuote: true
+                },
+                {
+                    movie: "Wicker Man",
+                    image: "https://m.media-amazon.com/images/M/MV5BZGExNGFlODUtOTZiYy00YzczLWI3ZTQtODBlMjNhYzhiYTkwXkEyXkFqcGc@._V1_.jpg",
+                    quote: "NOT THE BEES! NOT THE MICROSERVICES! THEY'RE IN MY EYES!",
+                    techQuote: true
+                },
+                {
+                    movie: "Vampire's Kiss",
+                    image: "https://m.media-amazon.com/images/M/MV5BYzk1ZjJlYjUtMjhhNy00MTA1LWI4MTItOWY1OGE2MTE4OWRjXkEyXkFqcGc@._V1_.jpg",
+                    quote: "I'm a vampire! I'm a vampire! I'm a vampire! Also I haven't slept in 3 days and the production incident still isn't resolved!",
+                    techQuote: true
+                },
+                {
+                    movie: "Bad Lieutenant",
+                    image: "https://m.media-amazon.com/images/M/MV5BMTU1MTE1Nzk1OF5BMl5BanBnXkFtZTcwNzU0NjkyNA@@._V1_.jpg",
+                    quote: "What are these f***ing iguanas doing on my coffee table? What is this deprecated API doing in production?",
+                    techQuote: true
+                },
+                {
+                    movie: "Spider-Man: Into the Spider-Verse",
+                    image: "https://m.media-amazon.com/images/M/MV5BZWYzNTI3YTMtNTJlNi00MWE4LTk4YWUtN2RlZTM4Zjc5NzYxXkEyXkFqcGc@._V1_.jpg",
+                    quote: "Anyone can wear the mask. Anyone can write clean code. (But most people don't.)",
+                    techQuote: true
+                }
+            ];
+            
+            function getCage() {
+                const container = document.getElementById('cageContainer');
+                container.innerHTML = '<div class="loading">Summoning Nicolas Cage...</div>';
+                
+                setTimeout(() => {
+                    const wisdom = cageWisdom[Math.floor(Math.random() * cageWisdom.length)];
+                    
+                    container.innerHTML = `
+                        <div class="movie-title">${wisdom.movie}</div>
+                        <img src="${wisdom.image}" alt="${wisdom.movie}" class="cage-image" onerror="this.style.display='none'">
+                        <div class="quote">"${wisdom.quote}"</div>
+                        <div class="attribution">- Nicolas Cage (probably)</div>
+                    `;
+                }, 800);
+            }
+            
+            function updateHostname() {
+                fetch('/api/hostname')
+                    .then(response => response.text())
+                    .then(hostname => {
+                        document.getElementById('hostname').textContent = hostname.trim();
+                    })
+                    .catch(() => {
+                        document.getElementById('hostname').textContent = 'unknown';
+                    });
+            }
+            
+            updateHostname();
+            setInterval(updateHostname, 5000);
+        </script>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nicolas-cage-hostname
+  namespace: nicolas-cage
+data:
+  01-hostname.sh: |-
+    #!/bin/sh
+    echo -n "$HOSTNAME" > /usr/share/nginx/html/hostname.txt
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nicolas-cage
+  namespace: nicolas-cage
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nicolas-cage
+  template:
+    metadata:
+      labels:
+        app: nicolas-cage
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: nginx.conf
+        - name: html
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: hostname-script
+          mountPath: /docker-entrypoint.d/01-hostname.sh
+          subPath: 01-hostname.sh
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nicolas-cage
+      - name: html
+        configMap:
+          name: nicolas-cage
+      - name: hostname-script
+        configMap:
+          name: nicolas-cage-hostname
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nicolas-cage
+  namespace: nicolas-cage
+spec:
+  selector:
+    app: nicolas-cage
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
