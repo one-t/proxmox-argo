@@ -87,17 +87,7 @@ data:
             <h1>🐮 Cowsay Fortune Teller 🔮</h1>
             <p>Click the button for wisdom from the cosmic cow!</p>
             <button onclick="getFortune()">Get Your Fortune!</button>
-            <div class="cowsay" id="fortune">
- _________________________________________
-/ Click the button above to receive your \
-\ fortune from the mystical cow!         /
- -----------------------------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-            </div>
+            <div class="cowsay" id="fortune">Click the button above for your fortune!</div>
             <div class="pod-info">
                 🎯 Served from pod: <strong id="hostname">Loading...</strong>
             </div>
@@ -128,16 +118,16 @@ data:
 
             function getFortune() {
                 const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-                const cow = `
- ${"_".repeat(fortune.length + 2)}
-< ${fortune} >
- ${"-".repeat(fortune.length + 2)}
-        \\   ^__^
-         \\  (oo)\\_______
-            (__)\\       )\\/\\
-                ||----w |
-                ||     ||
-                `;
+                const topBorder = '_'.repeat(fortune.length + 2);
+                const bottomBorder = '-'.repeat(fortune.length + 2);
+                const cow = ' ' + topBorder + '\\n' +
+                           '< ' + fortune + ' >\\n' +
+                           ' ' + bottomBorder + '\\n' +
+                           '        \\\\   ^__^\\n' +
+                           '         \\\\  (oo)\\\\_______\\n' +
+                           '            (__)\\\\       )\\\\/\\\\\\n' +
+                           '                ||----w |\\n' +
+                           '                ||     ||';
                 document.getElementById('fortune').textContent = cow;
             }
 
