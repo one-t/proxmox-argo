@@ -269,7 +269,7 @@ data:
             }
             
             function updateHostname() {
-                fetch('/api/hostname')
+                fetch('/nicolas-cage/api/hostname')
                     .then(response => response.text())
                     .then(hostname => {
                         document.getElementById('hostname').textContent = hostname.trim();

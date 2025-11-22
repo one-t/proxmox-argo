@@ -221,7 +221,7 @@ data:
             });
             
             function updateHostname() {
-                fetch('/api/hostname')
+                fetch('/screaming-into-void/api/hostname')
                     .then(response => response.text())
                     .then(hostname => {
                         document.getElementById('hostname').textContent = hostname.trim();
