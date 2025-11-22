@@ -100,26 +100,26 @@ data:
         </div>
         <script>
             const fortunes = [
-                "You will write bug-free code today... just kidding! \uD83D\uDC1B",
-                "A server will crash in your future. It won't be your fault. \uD83D\uDD25",
-                "You will find the missing semicolon on line 42. \uD83D\uDD0D",
-                "Beware of infinite loops. They're very while(true). \u267E\uFE0F",
-                "Your deployment will succeed on the first try! (Unlikely) \uD83D\uDE80",
-                "You will finally understand Kubernetes networking. (Eventually) \uD83D\uDD78\uFE0F",
-                "A wild merge conflict appears! Git ready! \u2694\uFE0F",
-                "Your code review will get approved without changes. (Miracle!) \u2728",
-                "You will discover a bug from 2019. It's still there. \uD83D\uDD77\uFE0F",
-                "Coffee will solve 90% of your problems today. \u2615",
-                "You will accidentally delete production. Just kidding! (Maybe) \uD83D\uDC80",
-                "Your Docker image will be under 100MB. (Impossible!) \uD83D\uDC33",
-                "You will read the documentation BEFORE Stack Overflow. (Doubtful) \uD83D\uDCDA",
-                "Kubernetes pods will start on first attempt. (Rare!) \uD83C\uDFB0",
-                "Your regex will work correctly. (Against all odds!) \uD83C\uDFB2",
-                "You will remember to commit before closing your laptop. \uD83D\uDCBE",
-                "A coworker will actually read your comments. (Shocking!) \uD83D\uDCAC",
-                "Your estimation will be accurate. (Unprecedented!) \u23F1\uFE0F",
-                "You will type 'kubectl' correctly on first try. (Legendary!) \u2328\uFE0F",
-                "The problem will NOT be DNS. (It's always DNS) \uD83C\uDF10"
+                "You will write bug-free code today... just kidding! 🐛",
+                "A server will crash in your future. It won't be your fault. 🔥",
+                "You will find the missing semicolon on line 42. 🔍",
+                "Beware of infinite loops. They're very while(true). ♾️",
+                "Your deployment will succeed on the first try! (Unlikely) 🚀",
+                "You will finally understand Kubernetes networking. (Eventually) 🕸️",
+                "A wild merge conflict appears! Git ready! ⚔️",
+                "Your code review will get approved without changes. (Miracle!) ✨",
+                "You will discover a bug from 2019. It's still there. 🕷️",
+                "Coffee will solve 90% of your problems today. ☕",
+                "You will accidentally delete production. Just kidding! (Maybe) 💀",
+                "Your Docker image will be under 100MB. (Impossible!) 🐳",
+                "You will read the documentation BEFORE Stack Overflow. (Doubtful) 📚",
+                "Kubernetes pods will start on first attempt. (Rare!) 🎰",
+                "Your regex will work correctly. (Against all odds!) 🎲",
+                "You will remember to commit before closing your laptop. 💾",
+                "A coworker will actually read your comments. (Shocking!) 💬",
+                "Your estimation will be accurate. (Unprecedented!) ⏱️",
+                "You will type 'kubectl' correctly on first try. (Legendary!) ⌨️",
+                "The problem will NOT be DNS. (It's always DNS) 🌐"
             ];
 
             function getFortune() {
