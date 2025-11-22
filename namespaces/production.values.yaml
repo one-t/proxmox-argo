@@ -1,0 +1,9 @@
+# Production namespace - just the essentials!
+name: production
+labels:
+  environment: production
+  cost-center: engineering
+quota:
+  pods: 50
+  cpu: "8"
+  memory: "16Gi"
