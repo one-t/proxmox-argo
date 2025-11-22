@@ -100,26 +100,26 @@ data:
         </div>
         <script>
             const fortunes = [
-                "You will write bug-free code today... just kidding! 🐛",
-                "A server will crash in your future. It won't be your fault. 🔥",
-                "You will find the missing semicolon on line 42. 🔍",
-                "Beware of infinite loops. They're very while(true). ♾️",
-                "Your deployment will succeed on the first try! (Unlikely) 🚀",
-                "You will finally understand Kubernetes networking. (Eventually) 🕸️",
-                "A wild merge conflict appears! Git ready! ⚔️",
-                "Your code review will get approved without changes. (Miracle!) ✨",
-                "You will discover a bug from 2019. It's still there. 🕷️",
-                "Coffee will solve 90% of your problems today. ☕",
-                "You will accidentally delete production. Just kidding! (Maybe) 💀",
-                "Your Docker image will be under 100MB. (Impossible!) 🐳",
-                "You will read the documentation BEFORE Stack Overflow. (Doubtful) 📚",
-                "Kubernetes pods will start on first attempt. (Rare!) 🎰",
-                "Your regex will work correctly. (Against all odds!) 🎲",
-                "You will remember to commit before closing your laptop. 💾",
-                "A coworker will actually read your comments. (Shocking!) 💬",
-                "Your estimation will be accurate. (Unprecedented!) ⏱️",
-                "You will type 'kubectl' correctly on first try. (Legendary!) ⌨️",
-                "The problem will NOT be DNS. (It's always DNS) 🌐"
+                "You will write bug-free code today... just kidding! &#x1F41B;",
+                "A server will crash in your future. It won't be your fault. &#x1F525;",
+                "You will find the missing semicolon on line 42. &#x1F50D;",
+                "Beware of infinite loops. They're very while(true). &#x267E;&#xFE0F;",
+                "Your deployment will succeed on the first try! (Unlikely) &#x1F680;",
+                "You will finally understand Kubernetes networking. (Eventually) &#x1F578;&#xFE0F;",
+                "A wild merge conflict appears! Git ready! &#x2694;&#xFE0F;",
+                "Your code review will get approved without changes. (Miracle!) &#x2728;",
+                "You will discover a bug from 2019. It's still there. &#x1F577;&#xFE0F;",
+                "Coffee will solve 90% of your problems today. &#x2615;",
+                "You will accidentally delete production. Just kidding! (Maybe) &#x1F480;",
+                "Your Docker image will be under 100MB. (Impossible!) &#x1F433;",
+                "You will read the documentation BEFORE Stack Overflow. (Doubtful) &#x1F4DA;",
+                "Kubernetes pods will start on first attempt. (Rare!) &#x1F3B0;",
+                "Your regex will work correctly. (Against all odds!) &#x1F3B2;",
+                "You will remember to commit before closing your laptop. &#x1F4BE;",
+                "A coworker will actually read your comments. (Shocking!) &#x1F4AC;",
+                "Your estimation will be accurate. (Unprecedented!) &#x23F1;&#xFE0F;",
+                "You will type 'kubectl' correctly on first try. (Legendary!) &#x2328;&#xFE0F;",
+                "The problem will NOT be DNS. (It's always DNS) &#x1F310;"
             ];
 
             function getFortune() {
