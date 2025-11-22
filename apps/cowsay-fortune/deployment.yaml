@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cowsay-fortune
+  namespace: cowsay-fortune
   annotations:
     configmap/update: "1"
 data:
@@ -17,7 +18,12 @@ data:
         
         location /api/fortune {
             default_type text/plain;
-            return 200 "🐮 Moo! Your fortune awaits at the main page! 🐮\n";
+            return 200 "Moo! Your fortune awaits at the main page!\n";
+        }
+        
+        location /api/hostname {
+            default_type text/plain;
+            alias /usr/share/nginx/html/hostname.txt;
         }
     }
   index.html: |-
@@ -84,12 +90,12 @@ data:
     </head>
     <body>
         <div class="container">
-            <h1>🐮 Cowsay Fortune Teller 🔮</h1>
+            <h1>Cowsay Fortune Teller</h1>
             <p>Click the button for wisdom from the cosmic cow!</p>
             <button onclick="getFortune()">Get Your Fortune!</button>
             <div class="cowsay" id="fortune">Click the button above for your fortune!</div>
             <div class="pod-info">
-                🎯 Served from pod: <strong id="hostname">Loading...</strong>
+                Served from pod: <strong id="hostname">Loading...</strong>
             </div>
         </div>
         <script>
@@ -153,6 +159,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cowsay-fortune
+  namespace: cowsay-fortune
 spec:
   replicas: 2
   selector:
@@ -193,6 +200,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cowsay-fortune-hostname
+  namespace: cowsay-fortune
 data:
   hostname.sh: |
     #!/bin/sh
@@ -204,6 +212,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cowsay-fortune
+  namespace: cowsay-fortune
 spec:
   selector:
     app: cowsay-fortune
