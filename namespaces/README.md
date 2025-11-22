@@ -1,147 +1,144 @@
-# Simplified Namespace Definitions
+# Namespace Management
 
-Instead of writing full Application manifests, just create simple values files!
+Namespaces are created using `namespace.yaml` files placed in app namespace directories.
 
-## Quick Start
+## How It Works
 
-### 1. Create a namespace values file:
+The ArgoCD ApplicationSet watches for `apps/*/namespace.yaml` files and creates a namespace Application for each one found.
 
-**`namespaces/my-app.values.yaml`:**
-```yaml
-name: my-app
-labels:
-  environment: production
-quota:
-  pods: 20
-  cpu: "4"
-  memory: "8Gi"
+## Directory Structure
+
+```
+apps/
+├── demo-apps/
+│   ├── namespace.yaml          ← Creates demo-apps namespace
+│   ├── hello-world/
+│   │   └── deployment.yaml
+│   └── cowsay-fortune/
+│       └── deployment.yaml
+├── production/
+│   ├── namespace.yaml          ← Creates production namespace
+│   └── api/
+│       └── deployment.yaml
+└── staging/
+    ├── namespace.yaml          ← Creates staging namespace
+    └── frontend/
+        └── deployment.yaml
 ```
 
-### 2. Update the ApplicationSet
+## Creating a New Namespace
 
-The `namespaces` ApplicationSet in cloud-init should use this pattern:
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: namespaces
-  namespace: argocd
-spec:
-  generators:
-  - git:
-      repoURL: https://github.com/one-t/proxmox-argo.git
-      revision: main
-      files:
-      - path: "namespaces/*.values.yaml"
-  template:
-    metadata:
-      name: '{{name}}-namespace'
-      annotations:
-        argocd.argoproj.io/sync-wave: "-1"
-    spec:
-      project: '{{project}}'  # Defaults to {{name}} if not set
-      source:
-        repoURL: https://github.com/one-t/proxmox-argo-helm.git
-        targetRevision: main
-        path: isolated-namespace
-        helm:
-          values: |
-            namespaceName: {{name}}
-            namespaceLabels:
-              environment: {{labels.environment}}
-              managed-by: argocd
-            resourceQuota:
-              enabled: true
-              hard:
-                pods: "{{quota.pods}}"
-                requests.cpu: "{{quota.cpu}}"
-                requests.memory: "{{quota.memory}}"
-                limits.cpu: "{{quota.cpuLimit}}"
-                limits.memory: "{{quota.memoryLimit}}"
-            networkPolicy:
-              enabled: true
-              allowExternalEgress: {{network.allowInternet}}
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: '{{name}}'
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+### 1. Create the directory
+```bash
+mkdir -p apps/my-namespace
 ```
 
-## Default Values
-
-The Helm chart has sensible defaults, so you only need to specify what you want to change:
-
-### Minimal Example (uses all defaults):
+### 2. Create `namespace.yaml` with Helm values
 ```yaml
-name: simple-app
-```
+# apps/my-namespace/namespace.yaml
+namespaceName: my-namespace
 
-### Common Example:
-```yaml
-name: my-backend
-labels:
+namespaceLabels:
   environment: production
   team: backend
-quota:
-  pods: 50
-  cpu: "8"
-  memory: "16Gi"
+
+resourceQuota:
+  enabled: true
+  hard:
+    pods: "50"
+    requests.cpu: "4"
+    requests.memory: "8Gi"
+    limits.cpu: "8"
+    limits.memory: "16Gi"
+
+networkPolicy:
+  enabled: true
+  allowDNS: true
+  allowKubeSystem: true
+  allowIngressController: true
+  allowExternalEgress: true
 ```
 
-### Advanced Example:
-```yaml
-name: isolated-db
-labels:
-  environment: production
-  workload: stateful
-quota:
-  pods: 10
-  cpu: "16"
-  memory: "64Gi"
-network:
-  allowInternet: false
-  allowFromNamespaces:
-    - name: backend
-      labels:
-        needs-database: "true"
-```
-
-## Benefits
-
-1. **90% less boilerplate** - just set the values you care about
-2. **Type-safe** - ApplicationSet validates the values
-3. **Git-driven** - commit values file, ArgoCD creates namespace
-4. **Consistent** - all namespaces use same Helm chart
-5. **Discoverable** - easy to see all namespaces in one directory
-
-## Migration
-
-To migrate existing namespace Applications:
-
+### 3. Commit and push
 ```bash
-# 1. Extract values from existing Application
-kubectl get application demo-apps-namespace -n argocd -o yaml > old.yaml
-
-# 2. Create simplified values file
-cat > namespaces/demo-apps.values.yaml <<EOF
-name: demo-apps
-labels:
-  environment: demo
-quota:
-  pods: 30
-  cpu: "2"
-  memory: "4Gi"
-EOF
-
-# 3. Delete old Application (ApplicationSet will recreate it)
-kubectl delete application demo-apps-namespace -n argocd
-
-# 4. Commit and push
-git add namespaces/demo-apps.values.yaml
-git commit -m "Migrate to simplified namespace definition"
+git add apps/my-namespace/
+git commit -m "Add my-namespace namespace"
 git push
 ```
+
+ArgoCD will automatically:
+- Discover the `namespace.yaml` file
+- Create Application `my-namespace-namespace`
+- Deploy the namespace with configured resources
+- Create admin and viewer ServiceAccounts
+- Apply resource quotas and network policies
+
+## Configuration Options
+
+All values from the [isolated-namespace Helm chart](https://github.com/one-t/proxmox-argo-helm/tree/main/isolated-namespace):
+
+**Required:**
+- `namespaceName` - Namespace name
+
+**Optional:**
+- `namespaceLabels` - Custom labels
+- `namespaceAnnotations` - Custom annotations
+- `resourceQuota.enabled` - Enable quotas (default: true)
+- `resourceQuota.hard.*` - Quota limits
+- `networkPolicy.enabled` - Enable network policies (default: true)
+- `networkPolicy.allowDNS` - Allow DNS (default: true)
+- `networkPolicy.allowKubeSystem` - Allow kube-system (default: true)
+- `networkPolicy.allowIngressController` - Allow ingress (default: true)
+- `networkPolicy.allowExternalEgress` - Allow external traffic (default: true)
+- `networkPolicy.allowEgressTo` - Additional allowed namespaces
+- `serviceAccount.admin.*` - Admin SA config
+- `serviceAccount.viewer.*` - Viewer SA config
+
+## Examples
+
+### Minimal (Using Defaults)
+```yaml
+# apps/staging/namespace.yaml
+namespaceName: staging
+```
+
+### Production (Custom Quotas)
+```yaml
+# apps/production/namespace.yaml
+namespaceName: production
+
+namespaceLabels:
+  environment: production
+  criticality: high
+
+resourceQuota:
+  enabled: true
+  hard:
+    pods: "100"
+    requests.cpu: "16"
+    requests.memory: "32Gi"
+    limits.cpu: "32"
+    limits.memory: "64Gi"
+```
+
+### Isolated (Restricted Network)
+```yaml
+# apps/isolated/namespace.yaml
+namespaceName: isolated
+
+networkPolicy:
+  enabled: true
+  allowDNS: true
+  allowKubeSystem: false
+  allowIngressController: false
+  allowExternalEgress: false
+  allowEgressTo: []
+```
+
+## Notes
+
+⚠️ **File must be `apps/NAMESPACE/namespace.yaml`** (not in subdirectories)
+
+✅ **Namespace created before apps** (sync-wave: -1)
+
+✅ **Match directory and namespace names** for clarity

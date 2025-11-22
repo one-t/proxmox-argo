@@ -1,4 +1,0 @@
-# Staging - even simpler, use most defaults
-name: staging
-labels:
-  environment: staging
