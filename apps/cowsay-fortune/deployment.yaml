@@ -1,0 +1,222 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cowsay-fortune
+  annotations:
+    configmap/update: "1"
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+        
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
+        }
+        
+        location /api/fortune {
+            default_type text/plain;
+            return 200 "🐮 Moo! Your fortune awaits at the main page! 🐮\n";
+        }
+    }
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Cowsay Fortune Teller 🐮</title>
+        <style>
+            body {
+                font-family: 'Courier New', monospace;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+            }
+            .container {
+                text-align: center;
+                padding: 40px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 20px;
+                max-width: 800px;
+            }
+            h1 {
+                font-size: 3em;
+                margin-bottom: 20px;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            }
+            .cowsay {
+                background: #f0f0f0;
+                color: #333;
+                padding: 30px;
+                border-radius: 10px;
+                margin: 20px 0;
+                font-size: 1.2em;
+                white-space: pre-wrap;
+                text-align: left;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            }
+            button {
+                background: #4CAF50;
+                color: white;
+                border: none;
+                padding: 15px 40px;
+                font-size: 1.2em;
+                border-radius: 50px;
+                cursor: pointer;
+                margin: 10px;
+                transition: all 0.3s;
+                font-family: 'Courier New', monospace;
+            }
+            button:hover {
+                background: #45a049;
+                transform: scale(1.05);
+            }
+            .pod-info {
+                margin-top: 20px;
+                font-size: 0.9em;
+                opacity: 0.8;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🐮 Cowsay Fortune Teller 🔮</h1>
+            <p>Click the button for wisdom from the cosmic cow!</p>
+            <button onclick="getFortune()">Get Your Fortune!</button>
+            <div class="cowsay" id="fortune">
+ _________________________________________
+/ Click the button above to receive your \
+\ fortune from the mystical cow!         /
+ -----------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+            </div>
+            <div class="pod-info">
+                🎯 Served from pod: <strong id="hostname">Loading...</strong>
+            </div>
+        </div>
+        <script>
+            const fortunes = [
+                "You will write bug-free code today... just kidding! 🐛",
+                "A server will crash in your future. It won't be your fault. 🔥",
+                "You will find the missing semicolon on line 42. 🔍",
+                "Beware of infinite loops. They're very while(true). ♾️",
+                "Your deployment will succeed on the first try! (Unlikely) 🚀",
+                "You will finally understand Kubernetes networking. (Eventually) 🕸️",
+                "A wild merge conflict appears! Git ready! ⚔️",
+                "Your code review will get approved without changes. (Miracle!) ✨",
+                "You will discover a bug from 2019. It's still there. 🕷️",
+                "Coffee will solve 90% of your problems today. ☕",
+                "You will accidentally delete production. Just kidding! (Maybe) 💀",
+                "Your Docker image will be under 100MB. (Impossible!) 🐳",
+                "You will read the documentation BEFORE Stack Overflow. (Doubtful) 📚",
+                "Kubernetes pods will start on first attempt. (Rare!) 🎰",
+                "Your regex will work correctly. (Against all odds!) 🎲",
+                "You will remember to commit before closing your laptop. 💾",
+                "A coworker will actually read your comments. (Shocking!) 💬",
+                "Your estimation will be accurate. (Unprecedented!) ⏱️",
+                "You will type 'kubectl' correctly on first try. (Legendary!) ⌨️",
+                "The problem will NOT be DNS. (It's always DNS) 🌐"
+            ];
+
+            function getFortune() {
+                const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                const cow = `
+ ${"_".repeat(fortune.length + 2)}
+< ${fortune} >
+ ${"-".repeat(fortune.length + 2)}
+        \\   ^__^
+         \\  (oo)\\_______
+            (__)\\       )\\/\\
+                ||----w |
+                ||     ||
+                `;
+                document.getElementById('fortune').textContent = cow;
+            }
+
+            async function updateHostname() {
+                try {
+                    const path = window.location.pathname;
+                    const basePath = path.endsWith('/') ? path.slice(0, -1) : path;
+                    const response = await fetch(basePath + '/api/hostname');
+                    const hostname = await response.text();
+                    document.getElementById('hostname').textContent = hostname.trim();
+                } catch (error) {
+                    document.getElementById('hostname').textContent = 'Unknown';
+                }
+            }
+
+            updateHostname();
+            setInterval(updateHostname, 5000);
+        </script>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cowsay-fortune
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cowsay-fortune
+  template:
+    metadata:
+      labels:
+        app: cowsay-fortune
+      annotations:
+        configmap/update: "1"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        - name: config
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: hostname-script
+          mountPath: /docker-entrypoint.d/99-hostname.sh
+          subPath: hostname.sh
+      volumes:
+      - name: config
+        configMap:
+          name: cowsay-fortune
+      - name: hostname-script
+        configMap:
+          name: cowsay-fortune-hostname
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cowsay-fortune-hostname
+data:
+  hostname.sh: |
+    #!/bin/sh
+    cat > /usr/share/nginx/html/hostname.txt <<EOF
+    $(hostname)
+    EOF
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cowsay-fortune
+spec:
+  selector:
+    app: cowsay-fortune
+  ports:
+  - port: 80
+    targetPort: 80

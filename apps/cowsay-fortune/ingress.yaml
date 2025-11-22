@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cowsay-fortune
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: cowsay-fortune-strip-prefix@kubernetescrd
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /cowsay-fortune
+        pathType: Prefix
+        backend:
+          service:
+            name: cowsay-fortune
+            port:
+              number: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /cowsay-fortune
