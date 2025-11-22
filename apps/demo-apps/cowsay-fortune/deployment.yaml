@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cowsay-fortune
-  namespace: demo-apps
   annotations:
     configmap/update: "1"
 data:
@@ -159,7 +158,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cowsay-fortune
-  namespace: demo-apps
 spec:
   replicas: 2
   selector:
@@ -207,7 +205,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cowsay-fortune-hostname
-  namespace: demo-apps
 data:
   hostname.sh: |
     #!/bin/sh
@@ -219,7 +216,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cowsay-fortune
-  namespace: demo-apps
 spec:
   selector:
     app: cowsay-fortune

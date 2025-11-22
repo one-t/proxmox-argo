@@ -7,7 +7,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: screaming-into-void
-  namespace: demo-apps
 data:
   nginx.conf: |-
     server {
@@ -241,7 +240,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: screaming-into-void-hostname
-  namespace: demo-apps
 data:
   01-hostname.sh: |-
     #!/bin/sh
@@ -251,7 +249,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: screaming-into-void
-  namespace: demo-apps
 spec:
   replicas: 2
   selector:
@@ -300,7 +297,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: screaming-into-void
-  namespace: demo-apps
 spec:
   selector:
     app: screaming-into-void

@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: terraform-k3s-hello-world
-  namespace: demo-apps
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
     traefik.ingress.kubernetes.io/router.middlewares: demo-apps-hello-world-stripprefix@kubernetescrd
@@ -22,7 +21,6 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: hello-world-stripprefix
-  namespace: demo-apps
 spec:
   stripPrefix:
     prefixes:
