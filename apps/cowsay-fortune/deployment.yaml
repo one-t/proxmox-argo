@@ -120,13 +120,13 @@ data:
                 const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
                 const topBorder = '_'.repeat(fortune.length + 2);
                 const bottomBorder = '-'.repeat(fortune.length + 2);
-                const cow = ' ' + topBorder + '\\n' +
-                           '< ' + fortune + ' >\\n' +
-                           ' ' + bottomBorder + '\\n' +
-                           '        \\\\   ^__^\\n' +
-                           '         \\\\  (oo)\\\\_______\\n' +
-                           '            (__)\\\\       )\\\\/\\\\\\n' +
-                           '                ||----w |\\n' +
+                const cow = ' ' + topBorder + '\n' +
+                           '< ' + fortune + ' >\n' +
+                           ' ' + bottomBorder + '\n' +
+                           '        \\   ^__^\n' +
+                           '         \\  (oo)\\_______\n' +
+                           '            (__)\\       )\\/\\\n' +
+                           '                ||----w |\n' +
                            '                ||     ||';
                 document.getElementById('fortune').textContent = cow;
             }
