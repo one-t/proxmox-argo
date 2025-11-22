@@ -7,7 +7,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nicolas-cage
-  namespace: nicolas-cage
+  namespace: demo-apps
 data:
   nginx.conf: |-
     server {
@@ -286,7 +286,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nicolas-cage-hostname
-  namespace: nicolas-cage
+  namespace: demo-apps
 data:
   01-hostname.sh: |-
     #!/bin/sh
@@ -296,7 +296,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nicolas-cage
-  namespace: nicolas-cage
+  namespace: demo-apps
 spec:
   replicas: 2
   selector:
@@ -338,7 +338,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nicolas-cage
-  namespace: nicolas-cage
+  namespace: demo-apps
 spec:
   selector:
     app: nicolas-cage
