@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rancher-helm-values
+  namespace: cattle-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+data:
+  values.yaml: |
+    hostname: rancher.local
+    replicas: 1
+    bootstrapPassword: "BOOTSTRAP_PASSWORD_PLACEHOLDER"
+    
+    # Use generated self-signed certificates
+    ingress:
+      tls:
+        source: rancher
+    
+    # Resources for Rancher
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: install-rancher
+  namespace: cattle-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      serviceAccountName: rancher-installer
+      containers:
+      - name: helm
+        image: alpine/helm:latest
+        command:
+        - sh
+        - -c
+        - |
+          # Add cert-manager repo and install it first
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          
+          # Install cert-manager (required for Rancher)
+          helm upgrade --install cert-manager jetstack/cert-manager \
+            --namespace cert-manager \
+            --create-namespace \
+            --set crds.enabled=true \
+            --wait
+          
+          # Add Rancher repo
+          helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+          helm repo update
+          
+          # Install Rancher
+          helm upgrade --install rancher rancher-stable/rancher \
+            --namespace cattle-system \
+            --values /config/values.yaml \
+            --wait
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      volumes:
+      - name: config
+        configMap:
+          name: rancher-helm-values
+      restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rancher-installer
+  namespace: cattle-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rancher-installer
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: rancher-installer
+  namespace: cattle-system
