@@ -20,7 +20,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: strip-prefix
+  name: cowsay-fortune-strip-prefix
   namespace: demo-apps
 spec:
   stripPrefix:
