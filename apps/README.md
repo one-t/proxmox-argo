@@ -1,6 +1,6 @@
 # App Directory Structure
 
-Apps are automatically discovered and deployed by ArgoCD ApplicationSet.
+Apps are automatically discovered and deployed by the ArgoCD ApplicationSet.
 
 ## Directory Structure Convention
 
@@ -16,6 +16,8 @@ apps/
     └── <app-name>/
         └── deployment.yaml
 ```
+
+**Note:** Namespace creation is handled in the `bootstrap/` directory, not here.
 
 ## How It Works
 
@@ -33,12 +35,15 @@ apps/
 
 ## Creating a New App
 
-### 1. Create directory structure:
+### 1. Ensure namespace exists
+First, create the namespace in `bootstrap/` directory if it doesn't exist. See `bootstrap/README.md`.
+
+### 2. Create directory structure
 ```bash
 mkdir -p apps/my-namespace/my-app
 ```
 
-### 2. Add Kubernetes manifests (NO namespace field needed):
+### 3. Add Kubernetes manifests (NO namespace field needed)
 ```yaml
 # apps/my-namespace/my-app/deployment.yaml
 apiVersion: apps/v1
@@ -51,23 +56,23 @@ spec:
   # ... rest of deployment
 ```
 
-### 3. Commit and push:
+### 4. Commit and push
 ```bash
 git add apps/my-namespace/
 git commit -m "Add my-app to my-namespace"
 git push
 ```
 
-### 4. ArgoCD automatically:
+### 5. ArgoCD automatically
 - Discovers the new app
 - Creates Application `my-namespace-my-app`
 - Deploys to `my-namespace` namespace
 
 ## Important Notes
 
-⚠️ **Do NOT include `namespace:` in your manifests** - ArgoCD sets this automatically
+⚠️ **Namespaces are created in `bootstrap/` directory, not here**
 
-✅ **Do create the namespace first** using a `.values.yaml` file in `namespaces/`
+⚠️ **Do NOT include `namespace:` in your manifests** - ArgoCD sets this automatically
 
 ✅ **Do use resource requests/limits** when namespace has resource quotas
 
