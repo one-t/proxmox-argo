@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  labels:
+    app: hello-world
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+      annotations:
+        configmap/update: "2"
+    spec:
+      containers:
+      - name: nginx
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: html
+        configMap:
+          name: hello-world-html
+      - name: nginx-config
+        configMap:
+          name: hello-world-nginx
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-nginx
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+        
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
+        }
+        
+        location = /api/hostname {
+            add_header Content-Type text/plain;
+            return 200 $hostname;
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-html
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Hello from k3s!</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+            .container {
+                text-align: center;
+                padding: 2rem;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                backdrop-filter: blur(10px);
+            }
+            h1 {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+            p {
+                font-size: 1.2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>&#x1F680; Hello from Terraform + K3s + ArgoCD!</h1>
+            <p>Running on Proxmox with automated GitOps deployment</p>
+            <p><strong>Pod:</strong> <span id="hostname"></span></p>
+        </div>
+        <script>
+            // Use window.location to get the current path and append api/hostname
+            const basePath = window.location.pathname.endsWith('/') 
+                ? window.location.pathname 
+                : window.location.pathname + '/';
+            fetch(basePath + 'api/hostname')
+                .then(r => r.text())
+                .then(h => document.getElementById('hostname').textContent = h)
+                .catch(e => {
+                    console.error('Failed to fetch hostname:', e);
+                    document.getElementById('hostname').textContent = 'unknown';
+                });
+        </script>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world
+spec:
+  selector:
+    app: hello-world
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

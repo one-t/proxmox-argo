@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: staging
+  namespace: argocd
+spec:
+  description: Staging Environment Project
+  
+  sourceRepos:
+  - 'https://github.com/one-t/proxmox-argo.git'
+  - 'https://github.com/one-t/proxmox-argo-helm.git'
+  - '*'
+  
+  destinations:
+  - namespace: staging
+    server: https://kubernetes.default.svc
+  
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  
+  orphanedResources:
+    warn: true
