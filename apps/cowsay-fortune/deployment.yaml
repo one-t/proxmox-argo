@@ -90,12 +90,12 @@ data:
     </head>
     <body>
         <div class="container">
-            <h1>Cowsay Fortune Teller</h1>
+            <h1>&#x1F42E; Cowsay Fortune Teller &#x1F52E;</h1>
             <p>Click the button for wisdom from the cosmic cow!</p>
             <button onclick="getFortune()">Get Your Fortune!</button>
             <div class="cowsay" id="fortune">Click the button above for your fortune!</div>
             <div class="pod-info">
-                Served from pod: <strong id="hostname">Loading...</strong>
+                &#x1F3AF; Served from pod: <strong id="hostname">Loading...</strong>
             </div>
         </div>
         <script>
