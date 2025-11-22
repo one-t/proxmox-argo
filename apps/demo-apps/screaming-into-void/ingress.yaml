@@ -14,7 +14,7 @@ metadata:
   name: screaming-into-void
   namespace: screaming-into-void
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: screaming-into-void-screaming-into-void-strip@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: demo-apps-screaming-into-void-strip@kubernetescrd
 spec:
   rules:
   - http:

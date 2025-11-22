@@ -4,7 +4,7 @@ metadata:
   name: cowsay-fortune
   namespace: cowsay-fortune
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: cowsay-fortune-strip-prefix@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: demo-apps-cowsay-fortune-strip-prefix@kubernetescrd
 spec:
   rules:
   - http:
